@@ -11,6 +11,21 @@ Function INMain()
 
     getRID(targets)
 
+    if targets.Length == 1 
+        Debug.Trace("The place you are looking for is "+targets[0]+" of here")
+    else
+        Debug.Trace("It seems the things you are looking for can't be found in one place")
+        int counter = 0 
+        While(counter < targets.Length)
+            if targets[counter] 
+                Debug.Trace("Obj"+counter+": "+targets[counter])
+            else
+                counter = targets.Length
+            EndIF 
+            counter+=1
+        EndWhile 
+    EndIF 
+
 EndFunction 
 
 String Function getSQT()
@@ -98,15 +113,18 @@ EndFunction
 String[] Function TargetsToArray(String sqtString, Int NumTargets)
 
     String[] targets = new String[128]
-    Debug.Trace("attempting to lsit targets")
     int counter = 0 
     while(counter < NumTargets)
-        counter+=1
-        String FindString = "Target "+counter
-        int targetIndex = StringUtil.Find(sqtString,FindString)
-        String target = StringUtil.Substring(sqtString,targetIndex,64)
-        Debug.Trace("target "+counter+": "+target)
-        targets[counter] = target
+        if targets[counter] 
+            counter+=1
+            String FindString = "Target "+counter
+            int targetIndex = StringUtil.Find(sqtString,FindString)
+            String target = StringUtil.Substring(sqtString,targetIndex,64)
+            Debug.Trace("target "+counter+": "+target)
+            targets[counter] = target
+        else 
+            counter = NumTargets
+        EndIF 
     EndWhile 
 
     return targets 
@@ -116,21 +134,25 @@ String [] Function getRID(String[] targets)
     String[] relLoc = new String[128]
     int counter = 0
     while(counter < targets.Length)
-        String target = targets[counter]
-        ;gets/isolates load door id
-        int sLoadDoorIndex = StringUtil.Find(target,"load door:")
-        String sDoor = StringUtil.Substring(target,sLoadDoorIndex,0)    
-        sLoadDoorIndex = StringUtil.Find(sDoor,":")
-        sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
-        ;if load door = same cell. use the ref id instead
-        if sdoor == "me cell/"
-            sLoadDoorIndex = StringUtil.Find(target,"Reference:")
-            sDoor = StringUtil.Substring(target,sLoadDoorIndex,0)   
+        if targets[counter]
+            String target = targets[counter]
+            ;gets/isolates load door id
+            int sLoadDoorIndex = StringUtil.Find(target,"load door:")
+            String sDoor = StringUtil.Substring(target,sLoadDoorIndex,0)    
             sLoadDoorIndex = StringUtil.Find(sDoor,":")
             sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
-        EndIf 
-        relLoc[counter] = getRelativeLoc(sDoor)
-        counter+=1 
+            ;if load door = same cell. use the ref id instead
+            if sdoor == "me cell/"
+                sLoadDoorIndex = StringUtil.Find(target,"Reference:")
+                sDoor = StringUtil.Substring(target,sLoadDoorIndex,0)   
+                sLoadDoorIndex = StringUtil.Find(sDoor,":")
+                sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
+            EndIf 
+            relLoc[counter] = getRelativeLoc(sDoor)
+            counter+=1 
+        else 
+            counter = targets.Length
+        EndIF 
     EndWhile 
     return relLoc 
 EndFunction 
@@ -149,7 +171,6 @@ int function oneLess(int index, int sub)
 EndFunction 
 
 String Function getRelativeLoc(String Ref)
-    String relLoc
     String cardinal
 
     ;select the passed in ref, then get it's x and y position 
@@ -166,7 +187,7 @@ String Function getRelativeLoc(String Ref)
     int pposy = StringUtil.Substring(ConsoleUtil.ReadMessage(),12,0) as int
     ConsoleUtil.ExecuteCommand("getpos x")
     int pposx = StringUtil.Substring(ConsoleUtil.ReadMessage(),12,0) as int
-    
+
     ;whiterun test (19312,-7424)
     if posy > pposy
         cardinal = "North"
@@ -179,6 +200,5 @@ String Function getRelativeLoc(String Ref)
     else 
         cardinal = cardinal +" West"
     EndIf
-    relLoc = ("Your Quest is "+cardinal+" of here, potato")
-    return relLoc 
+    return cardinal 
 EndFunction
