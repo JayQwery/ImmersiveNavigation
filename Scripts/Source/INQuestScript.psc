@@ -161,28 +161,20 @@ String Function getRelativeLoc(String Ref)
     int posy = StringUtil.Substring(ConsoleUtil.ReadMessage(),12,0) as int
     
     ; Debug.MessageBox("posx: "+posx+" posy: "+posy)
-    int ns
-    int ew 
     ConsoleUtil.ExecuteCommand("prid player")
     ConsoleUtil.ExecuteCommand("getpos y")
     int pposy = StringUtil.Substring(ConsoleUtil.ReadMessage(),12,0) as int
-
     ConsoleUtil.ExecuteCommand("getpos x")
-    String pposxString =
     int pposx = StringUtil.Substring(ConsoleUtil.ReadMessage(),12,0) as int
-
-
-    ; Debug.MessageBox("pposx: "+pposx+" pposy: "+pposy)
-    ns = pposy
-    ew = pposx 
+    
     ;whiterun test (19312,-7424)
-    if posy > ns
+    if posy > pposy
         cardinal = "North"
     else 
         cardinal = "South"
     EndIf
 
-    if posx > ew
+    if posx > pposx
         cardinal = cardinal+" East"
     else 
         cardinal = cardinal +" West"
