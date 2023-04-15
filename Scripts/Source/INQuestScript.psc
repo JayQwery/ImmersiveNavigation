@@ -76,9 +76,16 @@ String Function getRelativeLoc(String Ref,String hold)
         cardinal = cardinal +" West"
     EndIf
 
-    relLoc = ("Your Quest is "+cardinal+" of here")
+    Debug.Trace("line 79 ran, potato")
+    relLoc = ("Your Quest is "+cardinal+" of here, potato")
     return relLoc 
 EndFunction 
+
+
+function getNSWE()
+
+EndFunction 
+
 
 Function INMain()
     ;Tracks the number of times the spell has been cast
@@ -131,21 +138,23 @@ Function INMain()
     int sqtENDIndex = StringUtil.Find(questSQTargets,"Current Quest: ")
     questSQTargets = StringUtil.Substring(questSQTargets,0,sqtENDIndex)
 
-    ;gets/isolates load door id
-    int sLoadDoorIndex = StringUtil.Find(questSQTargets,"load door:")
-    String sDoor = StringUtil.Substring(questSQTargets,sLoadDoorIndex,0)    
-    sLoadDoorIndex = StringUtil.Find(sDoor,":")
-    sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
-    ; Debug.MessageBox("sdoor: "+sDoor)
-    if sdoor == "me cell/"
-        sLoadDoorIndex = StringUtil.Find(questSQTargets,"Reference:")
-        sDoor = StringUtil.Substring(questSQTargets,sLoadDoorIndex,0)   
-        sLoadDoorIndex = StringUtil.Find(sDoor,":")
-        sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
-    EndIf 
-    ; teleports player to quest
-    ; String cmd1 = "player.moveto "+sDoor
-    ; ConsoleUtil.ExecuteCommand(cmd1)
+    ;hijack the code to get the num of objectives 
+    
 
-    Debug.MessageBox(getRelativeLoc(sDoor,"player"))
+    ;gets/isolates load door id
+    ; int sLoadDoorIndex = StringUtil.Find(questSQTargets,"load door:")
+    ; String sDoor = StringUtil.Substring(questSQTargets,sLoadDoorIndex,0)    
+    ; sLoadDoorIndex = StringUtil.Find(sDoor,":")
+    ; sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
+    ; ; Debug.MessageBox("sdoor: "+sDoor)
+    ; if sdoor == "me cell/"
+    ;     sLoadDoorIndex = StringUtil.Find(questSQTargets,"Reference:")
+    ;     sDoor = StringUtil.Substring(questSQTargets,sLoadDoorIndex,0)   
+    ;     sLoadDoorIndex = StringUtil.Find(sDoor,":")
+    ;     sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
+    ; EndIf 
+    ; ; teleports player to quest
+    ; ; String cmd1 = "player.moveto "+sDoor
+    ; ; ConsoleUtil.ExecuteCommand(cmd1)\
+    ; Debug.MessageBox(getRelativeLoc(sDoor,"player"))
 EndFunction 
