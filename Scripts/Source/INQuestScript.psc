@@ -6,26 +6,52 @@ Function INMain()
     String questSQT = getSQT()
     String questID = getQuestID(QuestSQT)
     String ActiveQID = getActiveQuest(questID,questSQT)
+
     String[] targets = new string[128]
     targets = getTargets(questSQT)
 
-    getRID(targets)
+    String[] relLoc = getRID(targets)
 
-    if targets.Length == 1 
-        Debug.Trace("The place you are looking for is "+targets[0]+" of here")
+    String msg 
+    if relLoc.Length == 1 
+        msg = ("The place you are looking for is "+targets[0]+" of here")
     else
-        Debug.Trace("It seems the things you are looking for can't be found in one place")
+        msg = ("It seems the things you are looking for can't be found in one place")
         int counter = 0 
-        While(counter < targets.Length)
-            if targets[counter] 
-                Debug.Trace("Obj"+counter+": "+targets[counter])
+        While(counter < relLoc.Length)
+            if relLoc[counter] 
+                Debug.Trace("does this reloc exsist?")
+                int counterNUM = counter+1
+                String Nth
+                if counterNUM == 1 
+                    Nth = "st"
+                elseif counterNUM == 2
+                    Nth = "nd"
+                elseif counterNUM == 3
+                    Nth = "rd" 
+                else 
+                    Nth = "th"
+                EndIF 
+                msg += ("\n"+"The "+counterNUM+Nth+" location is "+relLoc[counter])
             else
-                counter = targets.Length
+                counter = relLoc.Length
             EndIF 
             counter+=1
         EndWhile 
+        Debug.MessageBox(msg)
     EndIF 
 
+EndFunction 
+
+function printArray(String[] testArray)
+    int counter = 0
+    if testarray.Length == 0
+        Debug.trace("array is empty")
+    endIF 
+    While(counter < testArray.Length)
+        Debug.Trace("array: "+testArray[counter])
+        counter+=1 
+    EndWhile 
 EndFunction 
 
 String Function getSQT()
@@ -44,6 +70,7 @@ String Function getSQT()
     ;gets the first curret quest listed by sqt
     int questIDIndex = StringUtil.Find(consoleText,"Current Quest: ")
     String questSQT = StringUtil.Substring(consoleText,questIDIndex+15,0)
+    UI.SetString("Console","_global.Console.ConsoleInstance.CommandHistory.text"," ")
     return questSQT
 EndFunction 
 
@@ -89,23 +116,12 @@ String[] Function getTargets(String questSQT)
      questSQTargets = StringUtil.Substring(questSQTargets,0,sqtENDIndex)
  
      ;hijack the code to get the num of objectives 
-     Debug.Trace("full sqt: "+questSQTargets)
      int currentTargetIndex = StringUtil.Find(questSQTargets,"Current Targets")
      int currentTargetNum = oneLess(currentTargetIndex,2)
-     
      String NumTargets = StringUtil.SubString(questSQTargets,currentTargetNum,2)
-     Debug.Trace("ct: "+NumTargets)
- 
-     Debug.Trace("numtarget: "+NumTargets)
- 
- 
+     ;fill the array 
      String[] targets = new String[128]
      targets = TargetsToArray(questSQT,NumTargets as Int)
-     int counter2 = 0
-     while(counter2 < targets.Length)
-         counter2+=1
-         Debug.Trace("lt: "+targets[counter2])
-     EndWhile 
 
      return targets
 EndFunction 
@@ -114,19 +130,14 @@ String[] Function TargetsToArray(String sqtString, Int NumTargets)
 
     String[] targets = new String[128]
     int counter = 0 
-    while(counter < NumTargets)
-        if targets[counter] 
-            counter+=1
-            String FindString = "Target "+counter
-            int targetIndex = StringUtil.Find(sqtString,FindString)
-            String target = StringUtil.Substring(sqtString,targetIndex,64)
-            Debug.Trace("target "+counter+": "+target)
-            targets[counter] = target
-        else 
-            counter = NumTargets
-        EndIF 
+    while(counter < NumTargets)  
+        int index = counter+1
+        String FindString = "Target "+index
+        int targetIndex = StringUtil.Find(sqtString,FindString)
+        String target = StringUtil.Substring(sqtString,targetIndex,64)
+        targets[counter] = target
+        counter+=1
     EndWhile 
-
     return targets 
 EndFunction 
 
@@ -196,9 +207,9 @@ String Function getRelativeLoc(String Ref)
     EndIf
 
     if posx > pposx
-        cardinal = cardinal+" East"
+        cardinal = cardinal+" east"
     else 
-        cardinal = cardinal +" West"
+        cardinal = cardinal +" west"
     EndIf
     return cardinal 
 EndFunction
