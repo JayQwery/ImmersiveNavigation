@@ -11,39 +11,39 @@ Function INMain()
     String[] targets = new string[128]
     targets = getTargets(questSQT,ActiveQID)
 
-    ; ; Debug.MessageBox("trgt:"+targets)
-    String[] relLoc = getRID(targets)
-
+    ; Debug.MessageBox("main trgt:"+targets)
+    String[] relLoc = GetRelLoc(targets)
+    ; Debug.MessageBox("RID: "+RID)
     String msg 
-    if relLoc.Length == 1 
-        msg = ("The place you are looking for is "+targets[0]+" of here")
-    else
-        msg = ("It seems the things you are looking for can't be found in one place")
+    
+    ; if RID.Length == 1 
+    ; else
         int counter = 0 
-        While(counter < relLoc.Length)
-            if relLoc[counter] 
-                Debug.Trace("does this reloc exsist?")
-                int counterNUM = counter+1
-                String Nth
-                if counterNUM == 1 
-                    Nth = "st"
-                elseif counterNUM == 2
-                    Nth = "nd"
-                elseif counterNUM == 3
-                    Nth = "rd" 
-                else 
-                    Nth = "th"
-                EndIF 
-                msg += ("\n"+"The "+counterNUM+Nth+" location is "+relLoc[counter])
-                ; ; Debug.MessageBox("reloc: "+relLoc[counter] +" co: "+counter)
-            else
-                counter = relLoc.Length
+    While(counter < relLoc.Length)
+        if relLoc[counter] 
+            int counterNUM = counter+1
+            String Nth
+            if counterNUM == 1 
+                Nth = "st"
+            elseif counterNUM == 2
+                Nth = "nd"
+            elseif counterNUM == 3
+                Nth = "rd" 
+            else 
+                Nth = "th"
             EndIF 
-            counter+=1
-        EndWhile 
-        ; ; Debug.MessageBox(msg)
-    EndIF 
-
+            if counter == 0 
+                msg = ("Head "+relLoc[counter]+" to find what you seek")
+            else
+                msg += ("\n"+"and for your "+counterNUM+Nth+" objective head "+relLoc[counter])
+            endIf 
+            ; ; Debug.MessageBox("reloc: "+RID[counter] +" co: "+counter)
+        else
+            counter = relLoc.Length
+        EndIF 
+        counter+=1
+    EndWhile 
+    Debug.MessageBox(msg)
 EndFunction 
 
 function printArray(String[] testArray)
@@ -120,44 +120,44 @@ String Function getQuestID(String questSQT)
 EndFunction 
 
 String[] Function getTargets(String questSQT,String QID)
-    Debug.MessageBox("sqt: "+questSQT)
-    ;
+
     int QIDindex = StringUtil.Find(questSQT,QID)
     String questSQTargets = StringUtil.Substring(questSQT,QIDindex,0)
     int sqtENDIndex = StringUtil.Find(questSQTargets,"Current Quest: ")
     questSQTargets = StringUtil.Substring(questSQTargets,0,sqtENDIndex)
 
-    Debug.MessageBox("targets1:"+questSQTargets)
     String[] targets = new String[128]
     targets = TargetsToArray(questSQTargets, QID)
     return targets
 EndFunction 
 
 String[] Function TargetsToArray(String questSQTargets, String QID)
+    Debug.MessageBox("tta target: "+questSQTargets)
     ;get the num of objectives 
     int qidIndex = StringUtil.Find(questSQTargets,QID)
     int currentTargetIndex = StringUtil.Find(questSQTargets,"Current Targets",qidIndex)
-    ; int currentTargetNum = oneLess(currentTargetIndex,2)
-    String NumTargets = StringUtil.SubString(questSQTargets,currentTargetIndex+15,0)
-    Debug.MessageBox("num of target: "+NumTargets)
+    currentTargetIndex = oneLess(currentTargetIndex,2)
+    String NumTargets = StringUtil.SubString(questSQTargets,currentTargetIndex,1)
+    ; Debug.MessageBox("num of target: "+NumTargets)
 
     ;fill the array 
     String[] targets = new String[128]
     int counter = 0 
-    ; while(counter < NumTargets)  
-    ;     int index = counter+1
-    ;     String FindString = "Target "+index
-    ;     int targetIndex = StringUtil.Find(questSQTargets,FindString)
-    ;     String target = StringUtil.Substring(questSQTargets,targetIndex,64)
-    ;     targets[counter] = target
-    ;     ; ; Debug.MessageBox("target"+target)
-    ;     counter+=1
-    ; EndWhile 
-    ; return targets 
+    while(counter < NumTargets as int)  
+        int index = counter+1
+        String FindString = "Target "+index
+        int targetIndex = StringUtil.Find(questSQTargets,FindString)
+        String target = StringUtil.Substring(questSQTargets,targetIndex,0)
+        targets[counter] = target
+        ; Debug.MessageBox("target"+target)
+        counter+=1
+    EndWhile 
+    return targets 
 EndFunction 
 
-String [] Function getRID(String[] targets)
-    String[] relLoc = new String[128]
+String [] Function GetRelLoc(String[] targets)
+    ; Debug.MessageBox("grid - trg: "+targets)
+    String[] RID = new String[128]
     int counter = 0
     while(counter < targets.Length)
         if targets[counter]
@@ -176,13 +176,14 @@ String [] Function getRID(String[] targets)
                 sLoadDoorIndex = StringUtil.Find(sDoor,":")
                 sDoor = StringUtil.Substring(sDoor,sLoadDoorIndex+4,8)
             EndIf 
-            relLoc[counter] = getRelativeLoc(sDoor)
+            RID[counter] = getRelativeLoc(sDoor)
             counter+=1 
         else 
             counter = targets.Length
         EndIF 
     EndWhile 
-    return relLoc 
+    ; Debug.MessageBox("grid - rid: "+RID)
+    return RID 
 EndFunction 
 
 ;Custom function to subtract 
@@ -228,9 +229,9 @@ String Function getRelativeLoc(String Ref)
     EndIf
 
     if posx > pposx
-        cardinal = cardinal +" west"
+        cardinal = cardinal +" east"
     else 
-        cardinal = cardinal+" east"
+        cardinal = cardinal+" west"
     EndIf
     return cardinal 
 EndFunction
